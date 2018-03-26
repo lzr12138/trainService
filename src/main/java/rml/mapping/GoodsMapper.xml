@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="rml.dao.GoodsMapper" >
+
+  <select id="allGoods" parameterType="java.util.Map" resultType="rml.model.Goods">
+	select * from goods
+	<where>
+		<if test="name != null and name !='' ">
+			name = #{name}
+		</if>
+		<if test="type != null and type !='' ">
+			and type = #{type}
+		</if>
+	</where>
+	order by salenum desc limit #{start},#{end}
+  </select>
+  
+  <select id="getCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+	select count(*) from goods
+	<where>
+		<if test="name != null and name !='' ">
+			name = #{name}
+		</if>
+		<if test="type != null and type !='' ">
+			and type = #{type}
+		</if>
+	</where>
+  </select>
+  
+  <select id="allGoodsforFirst" resultType="rml.model.Goods">
+	select * from goods order by salenum desc limit 5
+  </select>
+  
+  <select id="selectGoodsByGoodsId" parameterType="java.lang.String" resultType="rml.model.Goods">
+	select * from goods where id = #{goodsId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCommentByGoodsId" parameterType="java.lang.String" resultType="rml.model.Goods_comment">
+	select * from goods_comment where goods_id = #{goodsid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectUserCost" parameterType="java.util.Map" resultType="rml.model.CostInfo">
+	select * from buyinfo where userid = #{userid,jdbcType=VARCHAR}
+		<if test="name != null and name !='' ">
+			name = #{name}
+		</if>
+	 limit #{start},#{end}
+  </select>
+  <select id="getCountuser" parameterType="java.util.Map" resultType="java.lang.Integer">
+	select count(*) from buyinfo where userid = #{userid,jdbcType=VARCHAR}
+		<if test="name != null and name !='' ">
+			name = #{name}
+		</if>
+  </select>
+  
+  <insert id="insertComment" parameterType="rml.model.Goods_comment" >
+    insert into goods_comment (id, goods_id, comment_date, comment_user, content )
+    values (#{id,jdbcType=VARCHAR}, #{goods_id,jdbcType=VARCHAR}, #{comment_date,jdbcType=VARCHAR},  
+    #{comment_user,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="buyGoods" parameterType="rml.model.CostInfo" >
+    insert into buyinfo (id, userid, username, goodsid, goodsname, sum, total, date,ticketid )
+    values (#{id,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},  
+    #{goodsid,jdbcType=VARCHAR}, #{goodsname,jdbcType=VARCHAR}, #{sum,jdbcType=INTEGER},
+    #{total,jdbcType=DOUBLE}, #{date,jdbcType=VARCHAR},#{ticketid,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateGoods" parameterType="rml.model.Goods" >
+    update goods
+    set sum = #{sum,jdbcType=INTEGER} ,salenum = #{salenum,jdbcType=INTEGER}, price = #{price,jdbcType=DOUBLE},
+    name = #{name,jdbcType=VARCHAR}, type = #{type,jdbcType=VARCHAR}, detail = #{detail,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+ <insert id="insertGoods" parameterType="rml.model.Goods" >
+    insert into goods (id, name,type, price, sum, salenum, detail)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},  
+    #{price,jdbcType=DOUBLE}, #{sum,jdbcType=INTEGER}, #{salenum,jdbcType=INTEGER},
+    #{detail,jdbcType=VARCHAR})
+  </insert>
+  
+  <delete id="deleteCommentByGoodsId" parameterType="java.lang.String">
+  	delete from goods_comment where goods_id = #{id}
+  </delete>
+  
+  <delete id="deleteGoodsById" parameterType="java.lang.String">
+  	delete from goods where id = #{id}
+  </delete>
+  
+</mapper>

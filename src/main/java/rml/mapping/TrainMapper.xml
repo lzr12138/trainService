@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="rml.dao.TrainMapper" >
+	
+  <select id="allTrainForFirst" resultType="rml.model.Train">
+	select * from train order by starttime asc limit 5
+  </select>
+  
+  <select id="allTrain" parameterType="java.util.Map" resultType="rml.model.Train">
+	select * from train
+	<where>
+		<if test="trainid != null and trainid !='' ">
+			id = #{trainid}
+		</if>
+	</where>
+	order by starttime asc limit #{start},#{end}
+  </select>
+  
+  <select id="getCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+	select count(*) from train
+	<where>
+		<if test="trainid != null and trainid !='' ">
+			id = #{trainid}
+		</if>
+	</where>
+  </select>
+  
+  <select id="selectTrainById" parameterType="java.lang.String" resultType="rml.model.Train">
+	select * from train where id = #{trainid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCellByTrainId" parameterType="java.lang.String" resultType="rml.model.Cell">
+	select * from cell where betrainid = #{trainid,jdbcType=VARCHAR} order by numfortrain asc
+  </select>
+  
+  <select id="selectStationByTrainId" parameterType="java.lang.String" resultType="rml.model.timetable">
+	select * from timetable where trainid = #{trainid,jdbcType=VARCHAR} order by numfortrain asc
+  </select>
+  
+  <select id="selectTrainByTStationId" parameterType="java.lang.String" resultType="rml.model.timetable">
+	select * from timetable where stationid = #{stationid,jdbcType=VARCHAR} order by numfortrain asc
+  </select>
+  
+  <select id="getStation" parameterType="java.lang.String" resultType="rml.model.Station">
+	select * from Station where id = #{stationid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCellById" parameterType="java.lang.String" resultType="rml.model.Cell">
+	select * from cell where id = #{cellid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectChairByCellId" parameterType="java.lang.String" resultType="rml.model.Chair">
+	select * from chair where becellid = #{cellid,jdbcType=VARCHAR} order by numforcell asc
+  </select>
+  
+  <select id="getStart" parameterType="java.lang.String" resultType="rml.model.Train">
+	select * from train where startstation = #{stationid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getEnd" parameterType="java.lang.String" resultType="rml.model.Train">
+	select * from train where endstation = #{stationid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getTicketByTrainUserId" parameterType="java.lang.String" resultType="rml.model.ticket">
+	select * from ticket where trainid = #{param1,jdbcType=VARCHAR} and userid = #{param2,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insertTicket" parameterType="rml.model.ticket">
+  	insert into ticket(id,userid,trainid,instationid,outstationid,cellid,chairid,date)
+  	value (#{id,jdbcType=VARCHAR}, #{userid,jdbcType=VARCHAR},#{trainid,jdbcType=VARCHAR},
+  	#{instationid,jdbcType=VARCHAR},#{outstationid,jdbcType=VARCHAR},#{cellid,jdbcType=VARCHAR},
+  	#{chairid,jdbcType=VARCHAR},#{date,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="getCellRecord" resultType="java.lang.Integer">
+  	select count(*) from ticket where trainid=#{param1,jdbcType=VARCHAR} and cellid=#{param2,jdbcType=INTEGER} and date=#{param3,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getChairRecord" resultType="java.lang.Integer">
+  	select count(*) from ticket where trainid=#{param1,jdbcType=VARCHAR} and cellid=#{param2,jdbcType=INTEGER} and chairid=#{param3,jdbcType=INTEGER} and date=#{param4,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getTicketByChairidUserId" resultType="rml.model.ticket">
+  	select * from ticket where trainid=#{param1,jdbcType=VARCHAR} and cellid=#{param2,jdbcType=INTEGER} and chairid=#{param3,jdbcType=INTEGER} and date=#{param4,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectChairById" parameterType="java.lang.String" resultType="rml.model.Chair">
+	select * from chair where id = #{chairid,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insertChange" parameterType="rml.model.Change">
+	insert into changelist (id,changeuserid,bechangeuserid,changeticketid,bechangeticketid,reason,status,react,date)
+	value (#{id,jdbcType=VARCHAR},#{changeuserid,jdbcType=VARCHAR},#{bechangeuserid,jdbcType=VARCHAR},#{changeticketid,jdbcType=VARCHAR},
+	#{bechangeticketid,jdbcType=VARCHAR},#{reason,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{react,jdbcType=VARCHAR},#{date,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="selectTicketByUserIdBuy" parameterType="java.lang.String" resultType="rml.model.ticket">
+	select * from ticket where userid = #{userid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectTicketByUserId" parameterType="java.util.Map" resultType="rml.model.ticket">
+	select * from ticket where userid = #{userid,jdbcType=VARCHAR}
+		<if test="trainid != null and trainid !='' ">
+			trainid = #{trainid}
+		</if>
+		limit #{start},#{end}
+  </select>
+  <select id="getCountuser" parameterType="java.util.Map" resultType="java.lang.Integer">
+	select count(*) from ticket where userid = #{userid,jdbcType=VARCHAR}
+		<if test="trainid != null and trainid !='' ">
+			trainid = #{trainid}
+		</if>
+  </select>
+  
+  <select id="selectTicketById" parameterType="java.lang.String" resultType="rml.model.ticket">
+	select * from ticket where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteChairByCellId" parameterType="java.lang.String">
+  	delete from chair where becellid = #{id}
+  </delete>
+  
+  <delete id="deleteCellByTrainId" parameterType="java.lang.String">
+  	delete from cell where betrainid = #{id}
+  </delete>
+  
+  <delete id="deleteTrainById" parameterType="java.lang.String">
+  	delete from train where id = #{id}
+  </delete>
+  
+  <select id="getAllStation" resultType="rml.model.Station">
+	select * from station 
+  </select>
+  
+  <delete id="deleteTimetableByTrainId" parameterType="java.lang.String">
+  	delete from timetable where trainid = #{trainid}
+  </delete>
+  
+  <insert id="insertCell" parameterType="rml.model.Cell">
+	insert into cell (id,betrainid,numfortrain,chairnum)
+	value (#{id,jdbcType=VARCHAR},#{betrainid,jdbcType=VARCHAR},#{numfortrain,jdbcType=INTEGER},#{chairnum,jdbcType=INTEGER})
+  </insert>
+  
+  <insert id="insertChair" parameterType="rml.model.Chair">
+	insert into chair (id,becellid,numforcell)
+	value (#{id,jdbcType=VARCHAR},#{becellid,jdbcType=VARCHAR},#{numforcell,jdbcType=INTEGER})
+  </insert>
+  
+  <insert id="insertTrain" parameterType="rml.model.Train">
+	insert into train (id,startstation,endstation,starttime,endtime,runtime,cellnum)
+	value (#{id,jdbcType=VARCHAR},#{startstation,jdbcType=VARCHAR},#{endstation,jdbcType=VARCHAR},
+			#{starttime,jdbcType=VARCHAR},#{endtime,jdbcType=VARCHAR},#{runtime,jdbcType=VARCHAR},#{cellnum,jdbcType=INTEGER})
+  </insert>
+  
+  
+  <select id="getTimetableByTrainid" parameterType="java.util.Map" resultType="rml.model.timetable">
+	select * from timetable where trainid = #{trainid}
+	order by numfortrain asc limit #{start},#{end}
+  </select>
+  
+  <select id="getTimeCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+	select count(*) from timetable where trainid = #{trainid}
+  </select>
+  
+  
+  <insert id="insertTimeTable" parameterType="rml.model.ticket">
+  	insert into timetable(id,trainid,stationid,intime,outtime,stoptime,numfortrain)
+  	value (#{id,jdbcType=VARCHAR}, #{trainid,jdbcType=VARCHAR},#{stationid,jdbcType=VARCHAR},
+  	#{intime,jdbcType=VARCHAR},#{outtime,jdbcType=VARCHAR},#{stoptime,jdbcType=VARCHAR},
+  	#{numfortrain,jdbcType=INTEGER})
+  </insert>
+  
+  <select id="getAllStationForUI" parameterType="java.util.Map" resultType="rml.model.Station">
+	select * from station 
+	<where>
+		<if test="name != null and name !='' ">
+			name like '%${name}%'
+		</if>
+	</where>
+	limit #{start},#{end}
+  </select>
+  
+  <select id="getStationCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+	select count(*) from station 
+	<where>
+		<if test="name != null and name !='' ">
+			name like '%${name}%'
+		</if>
+	</where>
+  </select>
+  
+  <insert id="insertStation" parameterType="rml.model.Station">
+  		insert into station(id,name)
+  		value (#{id},#{name})
+  </insert>
+  
+  <update id="updateStation" parameterType="rml.model.Station">
+  	update station set name=#{name}
+  	where id=#{id}
+  </update>
+  
+  <delete id="deleteTimetableById" parameterType="java.lang.String">
+  	delete from timetable where id = #{id}
+  </delete>
+  
+  <select id="selectTimetableByTrainid" parameterType="java.lang.String" resultType="rml.model.timetable">
+	select * from timetable where trainid = #{trainid}
+	order by numfortrain asc
+  </select>
+  
+</mapper>

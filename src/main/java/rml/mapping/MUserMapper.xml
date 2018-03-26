@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="rml.dao.MUserMapper" >
+
+  <resultMap id="BaseResultMap" type="rml.model.User" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="AGE" property="age" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="VARCHAR" />
+    <result column="USERPSW" property="userpsw" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, USERNAME, AGE, EMAIL, SEX, USERPSW
+  </sql>
+  
+  <insert id="insert" parameterType="rml.model.User" >
+    insert into USER (ID, USERNAME, AGE, EMAIL, SEX, USERPSW)
+    values (#{id,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{age,jdbcType=VARCHAR}, 
+    #{email,jdbcType=VARCHAR},#{sex,jdbcType=VARCHAR},#{userpsw,jdbcType=VARCHAR})
+  </insert>
+      
+  <select id="login" resultType="rml.model.User" parameterType="java.lang.String" >
+    select * from user
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="adminLogin" resultType="rml.model.User" parameterType="java.lang.String" >
+    select * from admin
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="userDetail" resultType="rml.model.User" parameterType="java.lang.String" >
+    select * from user
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="check" resultType="java.lang.String" >
+    select id from user
+  </select>
+  
+  <delete id="deleteCost" parameterType="java.lang.String">
+  		delete from buyinfo where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteTicket" parameterType="java.lang.String">
+  		delete from ticket where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteCostByTicketid" parameterType="java.lang.String">
+  		delete from buyinfo where ticketid = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteChangeByTicketid" parameterType="java.lang.String">
+  		delete from changelist where changeticketid = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deletebeChangeByTicketid" parameterType="java.lang.String">
+  		delete from changelist where bechangeticketid = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <update id="updateUser" parameterType="rml.model.User">
+  	update user set username=#{username,jdbcType=VARCHAR},userpsw=#{userpsw,jdbcType=VARCHAR},sex=#{sex,jdbcType=VARCHAR},
+  	age=#{age,jdbcType=VARCHAR},email=#{email,jdbcType=VARCHAR},money=#{money,jdbcType=DOUBLE}
+  	where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectChangeByUserId" parameterType="java.lang.String" resultType="rml.model.Change" >
+    select * from changelist where bechangeuserid=#{userid,jdbcType=VARCHAR} order by status asc
+  </select>
+  
+  <select id="selectBeChangeByUserId" parameterType="java.lang.String" resultType="rml.model.Change" >
+    select * from changelist where changeuserid=#{userid,jdbcType=VARCHAR} order by status asc
+  </select>
+  
+  <update id="reactChange" parameterType="java.lang.String">
+  	update changelist set react=#{param2,jdbcType=VARCHAR} where id = #{param1,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>
